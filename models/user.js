@@ -1,5 +1,7 @@
 
-import { Schema, model } from "mongoose";
+import pkg from 'mongoose';
+const { Schema, model } = pkg;
+
 
 
 
@@ -21,12 +23,12 @@ const userSchema = Schema({
         img: {
             type: String,
         },
-        rol: {
+        role: {
             type: String,
             required: true,
             emun: ['ADMIN_ROLE','USER_ROLE']
         },
-        estado: {
+        state: {
             type: Boolean,
             default: true
         },

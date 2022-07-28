@@ -1,5 +1,5 @@
 import { request, response } from "express"
-
+import {User} from "../models/user.js"
 
 
 
@@ -33,14 +33,14 @@ const userPatch = (req, res = response) => {
         msg: 'Patch API - Controller'
     });
   }
-const userPost = (req, res = response) => {
+const userPost = async(req, res = response) => {
         
-    const {name,age} = req.body
-    res.json({
-        msg: 'Post API - Controller',
-        name,
-        age
-    });
+  const body = req.body
+  const user = new User(body);
+         await user.save()
+        res.json({
+          user
+        });
   }
 const userDelete = (req, res = response) => {
       
