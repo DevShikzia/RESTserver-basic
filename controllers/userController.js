@@ -1,5 +1,6 @@
 import { request, response } from "express"
 import {User} from "../models/user.js"
+import bcryptjs from "bcryptjs";
 
 
 
@@ -35,11 +36,22 @@ const userPatch = (req, res = response) => {
   }
 const userPost = async(req, res = response) => {
         
-  const body = req.body
-  const user = new User(body);
-         await user.save()
-        res.json({
-          user
+  const {name,email,password,role} = req.body //destructuring del body - En caso de no querer un argumento usar spread operator ejemople(role, ...resto)
+
+  
+  const user = new User({name,email,password,role}); // Creo un usario
+
+       // --  verifico si correo existe --
+
+       // -- Encripto contraseña -- 
+  
+  const salt = bcryptjs.genSaltSync()
+  user.password = bcryptjs.hashSync(password,salt)
+      
+  await user.save() // Se guarda en la BD
+ 
+       res.json({ 
+        user
         });
   }
 const userDelete = (req, res = response) => {
