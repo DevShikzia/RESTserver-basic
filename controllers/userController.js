@@ -33,8 +33,10 @@ const userPatch = (req, res = response) => {
     res.json({
         msg: 'Patch API - Controller'
     });
-  }
-const userPost = async(req, res = response) => {
+  } 
+     const userPost = async(req, res = response) => {
+
+
         
   const {name,email,password,role} = req.body //destructuring del body - En caso de no querer un argumento usar spread operator ejemople(role, ...resto)
 
@@ -42,19 +44,24 @@ const userPost = async(req, res = response) => {
   const user = new User({name,email,password,role}); // Creo un usario
 
        // --  verifico si correo existe --
+     
 
        // -- Encripto contraseña -- 
   
-  const salt = bcryptjs.genSaltSync()
-  user.password = bcryptjs.hashSync(password,salt)
-      
-  await user.save() // Se guarda en la BD
+      const salt = bcryptjs.genSaltSync()
+      user.password = bcryptjs.hashSync(password,salt)
+  
+      // Se guarda en la BD
+
+      await user.save() 
  
        res.json({ 
         user
         });
   }
-const userDelete = (req, res = response) => {
+
+
+       const userDelete = (req, res = response) => {
       
     res.json({
         msg: 'Delete API - Controller'

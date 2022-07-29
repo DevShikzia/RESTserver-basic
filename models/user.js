@@ -5,7 +5,7 @@ const { Schema, model } = pkg;
 
 
 
-const userSchema = Schema({
+const UserSchema = Schema({
         
         name: {
             type: String,
@@ -39,4 +39,9 @@ const userSchema = Schema({
 
 });
 
-export const User = model('User',userSchema);
+UserSchema.methods.toJSON = function() {
+    const {__v,password, ...user} = this.toObject();
+    return user;
+}
+
+export const User = model('User',UserSchema);
