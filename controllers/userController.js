@@ -79,10 +79,18 @@ const userPatch = (req, res = response) => {
   }
 
 
-       const userDelete = (req, res = response) => {
-      
+       const userDelete = async(req, res = response) => {
+
+        const {id} = req.params;
+      //NO RECOMENDADO: borrar fisicamente
+     // const user = await User.findByIdAndDelete(id);
+
+     
+     const user = await User.findByIdAndUpdate(id,{state:false},{new:true})
+
     res.json({
-        msg: 'Delete API - Controller'
+        id,
+        user
     });
   }
 

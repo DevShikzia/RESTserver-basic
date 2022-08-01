@@ -36,5 +36,11 @@ export const router = Router();
         body('role').custom( isValidRole),  
         fieldValidation
        ],userPost)
-       .delete('/', userDelete)
+       .delete('/:id',[
+
+        check('id', 'No es un ID valido').isMongoId().bail(),
+         check('id').bail().custom((id) => isValidUserId(id)).bail(),
+         fieldValidation,
+
+       ] ,userDelete)
 
