@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Role } from "../models/role.js";
 import {User} from "../models/user.js"
 
@@ -19,9 +20,23 @@ const isValidEmail = async(email = '') => {
     }
 }
 
+const isValidUserId = async(id) => {
+       console.log(id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error(`This isn't a valid Mongoose ID`);
+}
+
+const userExist = await User.findById(id);
+
+if ( !userExist ) {
+    throw new Error(`The user with ID '${ id }' doesn't exist`);
+}
+};
+
 
 
 export {
     isValidRole,
-    isValidEmail
+    isValidEmail,
+    isValidUserId
 }

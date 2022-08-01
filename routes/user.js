@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { body, check } from "express-validator";
+import { body, check,param } from "express-validator";
 
 
 import {fieldValidation} from "../middlewares/fieldValidation.js"
-import { isValidEmail, isValidRole } from "../helpers/db-valiations.js";
+import { isValidEmail, isValidRole, isValidUserId } from "../helpers/db-valiations.js";
 
 
 
@@ -19,7 +19,13 @@ export const router = Router();
 
   router
        .get('/', userGet)
-       .put('/:id', userPut)
+       .put('/:id',[
+         check('id', 'No es un ID valido').isMongoId().bail(),
+         check('id').bail().custom((id) => isValidUserId(id)).bail(),
+         body('role').custom( isValidRole),  
+
+        fieldValidation
+       ], userPut)
        .patch('/', userPatch)
        .post('/',[ 
         body('name','Debes poner tu nombre').not().isEmpty(),

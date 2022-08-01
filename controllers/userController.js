@@ -19,13 +19,26 @@ const userGet = (req = request, res = response) => {
   }
 
 
-const userPut = (req, res = response) => {
+const userPut = async(req, res = response) => {
       
-   const {id} = req.params
+   const {id} = req.params;
+
+   const {_id,password,google, ...rest} = req.body;
+
+
+   // TODO: VALIDAR CONTRA BASE DE DATOS
+
+   if(password) {
+    const salt = bcryptjs.genSaltSync()
+    rest.password = bcryptjs.hashSync(password,salt)
+   }
+
+   const user = await User.findByIdAndUpdate(id, rest, {new:true})
+
 
     res.json({
         msg: 'Put API - Controller',
-        id
+        user
     });
   }
 const userPatch = (req, res = response) => {
