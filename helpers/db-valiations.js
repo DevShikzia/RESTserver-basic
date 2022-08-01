@@ -21,7 +21,6 @@ const isValidEmail = async(email = '') => {
 }
 
 const isValidUserId = async(id) => {
-       console.log(id);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(`This isn't a valid Mongoose ID`);
 }

@@ -5,16 +5,24 @@ import bcryptjs from "bcryptjs";
 
 
 
-const userGet = (req = request, res = response) => {
+const userGet = async(req = request, res = response) => {
       
-    const {q,apikey,name='not name',page ='1',limit = 5} = req.query;
+    const {limit = 5,skip = 0 } = req.query;
+    const query = {state:true}
+
+
+    const [ total, users  ] = await Promise.all([
+                 User.countDocuments(query),
+                 User.find(query)
+                   .limit(limit)
+                   .skip(skip)
+      
+    ])
+
     res.json({
-        msg: 'get API - Controller',
-        q,
-        apikey,
-        name,
-        page,
-        limit
+      total,
+      users
+
     });
   }
 
@@ -36,10 +44,7 @@ const userPut = async(req, res = response) => {
    const user = await User.findByIdAndUpdate(id, rest, {new:true})
 
 
-    res.json({
-        msg: 'Put API - Controller',
-        user
-    });
+    res.json(user);
   }
 const userPatch = (req, res = response) => {
       
