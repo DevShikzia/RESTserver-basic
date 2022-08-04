@@ -2,9 +2,13 @@ import { Router } from "express";
 import { body, check,param } from "express-validator";
 
 
-import {fieldValidation} from "../middlewares/fieldValidation.js"
-import { isValidEmail, isValidRole, isValidUserId } from "../helpers/db-valiations.js";
+// import {fieldValidation} from "../middlewares/fieldValidation.js"
+// import { validateJWT } from "../middlewares/validateJWT.js";
+// import { isAdminRole, hasRole } from "../middlewares/validateRole.js";
 
+import { fieldValidation,validateJWT, hasRole,isAdminRole } from "../middlewares/index.js";
+
+import { isValidEmail, isValidRole, isValidUserId } from "../helpers/db-valiations.js";
 
 
 import { userDelete,
@@ -37,7 +41,9 @@ export const router = Router();
         fieldValidation
        ],userPost)
        .delete('/:id',[
-
+         validateJWT,
+        //  isAdminRole,
+        hasRole('ADMIN_ROLE','VENTAS_ROLE'),
         check('id', 'No es un ID valido').isMongoId().bail(),
          check('id').bail().custom((id) => isValidUserId(id)).bail(),
          fieldValidation,
