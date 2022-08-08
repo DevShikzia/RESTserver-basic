@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body, check,param } from "express-validator";
-import { login } from "../controllers/authController.js";
+import { googleSignIn, login } from "../controllers/authController.js";
 import { fieldValidation } from "../middlewares/fieldValidation.js";
 
 
@@ -12,3 +12,8 @@ router
         check('password','debes ingresar la contraseña').not().isEmpty(),
         fieldValidation
     ],login )
+    .post('/google',[
+        check('id_token','id_token de Google es necesario').notEmpty(),
+        fieldValidation
+    ],googleSignIn )
+    
