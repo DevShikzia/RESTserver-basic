@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Category } from '../models/index.js';
 import { Role } from "../models/role.js";
 import {User} from "../models/user.js"
 
@@ -33,9 +34,23 @@ if ( !userExist ) {
 };
 
 
+const isValidCategoryId = async(id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error(`This isn't a valid Mongoose ID`);
+}
+
+const categoryExist = await Category.findById(id);
+
+if ( !categoryExist ) {
+    throw new Error(`The category with ID '${ id }' doesn't exist`);
+}
+};
+
+
 
 export {
     isValidRole,
     isValidEmail,
-    isValidUserId
+    isValidUserId,
+    isValidCategoryId
 }

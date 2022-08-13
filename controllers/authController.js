@@ -1,4 +1,4 @@
-import { json, request, response } from "express";
+import {request, response } from "express";
 import {User} from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import { generateJWT } from "../helpers/generateJWT.js";
