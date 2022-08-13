@@ -14,7 +14,7 @@ const GetAllCategory = async(req = request,res = response) => {
                                  Category.find(query)
                                       .limit(limit)
                                       .skip(skip)
-                                      .populate('user')
+                                      .populate('user','name')
              
 ])
 
@@ -27,18 +27,19 @@ const GetAllCategory = async(req = request,res = response) => {
 
 }
 
+
 // Obtener Category - populate {}
 
 const GetOneCategory =  async(req,res) => {
 
     const {id} = req.params;
 
-    const category = await Category.findById({ _id : id }).populate('user')
+    const category = await Category.findById({ _id : id }).populate('user','name')
   
      if (!category) {
-        res.send(400).json(
-            'No se encuentra esa categoria'
-        )
+        res.send(400).json({ 
+             msg: `no se encuentra la categoria ${category.name}`
+         } )
      }
 
 
@@ -92,7 +93,27 @@ const createCategory = async(req = request, res = response ) =>{
 
 // actualizar category 
 
+const updateCategory = async(req, res) =>{
 
+
+     const {id} = req.params
+     
+     const {state,user, ...data} = req.body
+
+
+     data.name = data.name.toUpperCase();
+     data.user = req.user._id;
+
+
+
+
+     const category = await Category.findByIdAndUpdate(id,data,{new:true})
+
+
+     res.json(category)
+
+
+}
 
 
 
@@ -116,5 +137,6 @@ export {
     GetAllCategory,
     GetOneCategory,
     createCategory,
+    updateCategory,
     deleteCategory,
 }

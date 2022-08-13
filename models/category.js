@@ -21,4 +21,12 @@ const { Schema, model } = pkg;
   });
 
 
+  CategorySchema.methods.toJSON = function() {
+    const {__v,state,...data} = this.toObject();
+     
+
+    return data;
+}
+
+
   export const Category = model('Category',CategorySchema)
