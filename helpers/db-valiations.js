@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Category } from '../models/index.js';
+import { Category,Product } from '../models/index.js';
 import { Role } from "../models/role.js";
 import {User} from "../models/user.js"
 
@@ -45,6 +45,17 @@ if ( !categoryExist ) {
     throw new Error(`The category with ID '${ id }' doesn't exist`);
 }
 };
+const isValidProductId = async(id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error(`This isn't a valid Mongoose ID`);
+}
+
+const productExist = await Product.findById(id);
+
+if ( !productExist ) {
+    throw new Error(`The product with ID '${ id }' doesn't exist`);
+}
+};
 
 
 
@@ -52,5 +63,6 @@ export {
     isValidRole,
     isValidEmail,
     isValidUserId,
-    isValidCategoryId
+    isValidCategoryId,
+    isValidProductId
 }
