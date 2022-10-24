@@ -1,10 +1,7 @@
-import path from 'path'
-import {fileURLToPath} from 'url';
-
-
 import { response } from "express";
+import { uploadFile } from "../helpers/upload-files.js";
 
-const fileUpload = (req,res = response) => {
+const fileUpload = async(req,res = response) => {
 
     console.log(req.files)
  
@@ -14,22 +11,9 @@ const fileUpload = (req,res = response) => {
     }
   
     
-  
-    const {file} = req.files;
+  const path = await uploadFile(req.files)
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  
-   const uploadPath = path.join(__dirname,'../uploads/', file.name)
-  
-        console.log(uploadPath)
-
-    file.mv(uploadPath, (err) => {
-      if (err) {
-        return res.status(500).json({err});
-      }
-  
-      res.json({msg:'File uploaded to ' + uploadPath});
-    });
+  res.json({ path})
 }
 
 
