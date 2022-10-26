@@ -6,6 +6,10 @@ import path from "path";
 import fs from 'fs'
 import { fileURLToPath } from "url";
 
+import { v2 as cloudinary } from 'cloudinary'
+
+
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const fileUpload = async (req, res = response) => {
@@ -59,6 +63,47 @@ const UpdateFile = async (req, res = response) => {
   res.json(`la imagen del ${collection} : ${id} fue cambiada por ${pathImage}`);
 };
 
+const UpdateFileCloudinary = async (req, res = response) => {
+  const { id, collection } = req.params;
+
+  let model;
+  let resp;
+  const {tempFilePath} = req.files.file
+
+  switch (collection) {
+    case "user":
+      model = await User.findById(id);
+      if (!model) {
+        return res.status(400).json({
+          msg: `no existe un usuario con el id ${id}`,
+        });
+      }
+
+       
+       resp = await cloudinary.uploader.upload(tempFilePath)
+    
+      await User.findByIdAndUpdate(id, { img: resp.secure_url });
+      break;
+    case "product":
+      model = await Product.findById(id);
+      if (!model) {
+        return res.status(400).json({
+          msg: `no existe un producto con el id ${id}`,
+        });
+      }
+       resp = await cloudinary.uploader.upload(tempFilePath)
+      
+      await Product.findByIdAndUpdate(id, { img: resp.secure_url });
+
+      break;
+
+    default:
+      return res.status(500).json({ msg: "se me olvido validar esto" });
+  }
+
+  res.json(`la imagen del ${collection} : ${id} fue cambiada por ${resp.secure_url}`);
+};
+
 const showImage = async(req, res = response ) => {
   const {collection,id} = req.params
 
@@ -110,4 +155,4 @@ const showImage = async(req, res = response ) => {
  
 };
 
-export { fileUpload, UpdateFile,showImage };
+export { fileUpload, showImage, UpdateFileCloudinary };
