@@ -1,6 +1,10 @@
 import path from "path";
+import fs from 'fs'
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
+import { response } from "express";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const uploadFile = (
   files = '',
@@ -24,7 +28,6 @@ const uploadFile = (
 
     const newName = uuidv4() + "." + extension;
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const uploadPath = path.join(__dirname, "../uploads/", folder, newName);
 
 
@@ -38,6 +41,24 @@ const uploadFile = (
   });
 };
 
+
+const removeOldImage = (collection,model) => {
+
+  if(model.img ){
+
+    const pathImage = path.join(__dirname, "../uploads/", collection, model.img);
+
+    if(fs.existsSync(pathImage)){
+        fs.unlinkSync(pathImage)
+    }
+
+}
+}
+
+
+
+
 export {
-    uploadFile
+    uploadFile,
+    removeOldImage,
 }

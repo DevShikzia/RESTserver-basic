@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {  check,} from "express-validator";
-import { fileUpload, UpdateFile } from "../controllers/uploadController.js";
+import { fileUpload, showImage, UpdateFile } from "../controllers/uploadController.js";
 import { allowedCollections } from "../helpers/db-valiations.js";
 import { fieldValidation } from "../middlewares/fieldValidation.js";
 import { validateFiles } from "../middlewares/validateFile.js";
@@ -15,3 +15,8 @@ router
         check('collection').custom(c => allowedCollections(c,['user','product'])),
         fieldValidation
     ], UpdateFile)
+    .get('/:collection/:id',[
+        check('id', 'No es un ID valido').isMongoId().bail(),
+        check('collection').custom(c => allowedCollections(c,['user','product'])),
+        fieldValidation
+    ],showImage)

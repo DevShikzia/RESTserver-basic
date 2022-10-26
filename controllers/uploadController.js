@@ -1,66 +1,113 @@
 import { response } from "express";
-import { uploadFile } from "../helpers/upload-files.js";
+import { removeOldImage, uploadFile } from "../helpers/upload-files.js";
 import { Product } from "../models/product.js";
 import { User } from "../models/user.js";
+import path from "path";
+import fs from 'fs'
+import { fileURLToPath } from "url";
 
-const fileUpload = async(req,res = response) => {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    console.log(req.files)
- 
-  
-    try {
+const fileUpload = async (req, res = response) => {
+  console.log(req.files);
 
-      const path = await uploadFile(req.files,undefined,'imgs')
+  try {
+    const pathFile = await uploadFile(req.files, undefined, "imgs");
 
-      res.json({ path})
-      
-    } catch (msg) {
-      res.status(400).json({ msg })
-    }
+    res.json({ pathFile });
+  } catch (msg) {
+    res.status(400).json({ msg });
+  }
+};
 
-
-}
-
-
-const UpdateFile = async(req, res = response ) => {
-
-  const {id,collection} = req.params
-
+const UpdateFile = async (req, res = response) => {
+  const { id, collection } = req.params;
 
   let model;
-  const path = await uploadFile(req.files,undefined,collection)
+
+  let pathImage;
 
   switch (collection) {
-    case 'user':
+    case "user":
       model = await User.findById(id);
       if (!model) {
         return res.status(400).json({
-          msg: `no existe un usuario con el id ${id}`
-          });
-       }
-      await User.findByIdAndUpdate(id,{img:path});
+          msg: `no existe un usuario con el id ${id}`,
+        });
+      }
+      pathImage = await uploadFile(req.files, undefined, collection);
+      removeOldImage(collection, model);
+      await User.findByIdAndUpdate(id, { img: pathImage });
       break;
-   case 'product':
-       model = await Product.findById(id)
-       if (!model) {
-          return res.status(400).json({
-            msg: `no existe un producto con el id ${id}`
-          });
-       }
-       
-      await Product.findByIdAndUpdate(id,{img:path})
-       
+    case "product":
+      model = await Product.findById(id);
+      if (!model) {
+        return res.status(400).json({
+          msg: `no existe un producto con el id ${id}`,
+        });
+      }
+      pathImage = await uploadFile(req.files, undefined, collection);
+      removeOldImage(collection, model);
+      await Product.findByIdAndUpdate(id, { img: pathImage });
+
       break;
-  
+
     default:
-      return res.status(500).json({msg: 'se me olvido validar esto'})
+      return res.status(500).json({ msg: "se me olvido validar esto" });
   }
 
-  res.json(`la imagen del ${collection} : ${id} fue cambiada por ${path}`)
-}
+  res.json(`la imagen del ${collection} : ${id} fue cambiada por ${pathImage}`);
+};
+
+const showImage = async(req, res = response ) => {
+  const {collection,id} = req.params
+
+  let model;
 
 
-export {
-    fileUpload,
-    UpdateFile
-}
+  const returnImage = (collection,model) => {
+
+    if(model.img ){
+  
+      const pathImage = path.join(__dirname, "../uploads/", collection, model.img);
+      const notImage = path.join(__dirname,'../assets/','no-image.jpg')
+  
+      if(fs.existsSync(pathImage)){
+        return res.sendFile(pathImage)
+      }
+      res.sendFile(notImage)
+  }
+
+  }
+
+
+  switch (collection) {
+    case "user":
+      model = await User.findById(id);
+      if (!model) {
+        return res.status(400).json({
+          msg: `no existe un usuario con el id ${id}`,
+        });
+      }  
+      returnImage(collection, model);
+  
+      break;
+    case "product":
+      model = await Product.findById(id);
+      if (!model) {
+        return res.status(400).json({
+          msg: `no existe un producto con el id ${id}`,
+        });
+      }
+  
+      returnImage(collection, model);
+ 
+      break;
+    default:
+      return res.status(500).json({ msg: "se me olvido validar esto" });
+  }
+
+ 
+};
+
+export { fileUpload, UpdateFile,showImage };
