@@ -18,6 +18,10 @@ const { Schema, model } = pkg;
             ref: 'User',
             required:true
         },
+        img: {
+            type: String,
+            default:"DEFAULT_IMG"
+        },
         price: {
             type: Number,
             default: 0,
@@ -28,7 +32,7 @@ const { Schema, model } = pkg;
             required:true
         },
         description: { type:String},
-        available: { type: Boolean, default:true}
+        available: { type: Boolean, default:true} 
   });
 
 

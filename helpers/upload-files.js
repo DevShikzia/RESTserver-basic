@@ -3,7 +3,7 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 
 const uploadFile = (
-  files,
+  files = '',
   allowedExtensions = ["png", "jpg", "jpeg", "gif", "svg"],
   folder = ""
 ) => {

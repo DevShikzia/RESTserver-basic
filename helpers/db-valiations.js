@@ -57,12 +57,23 @@ if ( !productExist ) {
 }
 };
 
+// validar colecciones permitidas
 
+const allowedCollections = (collection = '', collections = []) => {
+
+  const included = collections.includes(collection)
+
+  if(!included){
+    throw new Error(`La coleccion ${collection} no esta permitida, ${collections}`)
+  }
+    return true
+}
 
 export {
     isValidRole,
     isValidEmail,
     isValidUserId,
     isValidCategoryId,
-    isValidProductId
+    isValidProductId,
+    allowedCollections
 }
